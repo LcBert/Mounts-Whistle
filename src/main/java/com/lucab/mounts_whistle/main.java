@@ -8,6 +8,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
@@ -22,6 +23,8 @@ public class main {
         WhistleDataComponents.register(modEventBus);
 
         modEventBus.addListener(this::addCreative);
+
+        modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
     }
 
     public void addCreative(BuildCreativeModeTabContentsEvent event) {
