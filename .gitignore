@@ -1,0 +1,12 @@
+# VSCode
+.vscode
+
+# gradle
+build
+.gradle
+
+# other
+runs
+.github
+
+repo
