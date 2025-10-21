@@ -23,12 +23,8 @@ public class WhistleDataComponents {
             "mount_uuid",
             builder -> builder.persistent(Codec.STRING));
 
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<String>> MOUNT_VARIANT = register(
-            "mount_variant",
-            builder -> builder.persistent(Codec.STRING));
-
-    public static final DeferredHolder<DataComponentType<?>, DataComponentType<String>> MOUNT_SADDLE = register(
-            "mount_saddle",
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<String>> MOUNT_TYPE = register(
+            "mount_type",
             builder -> builder.persistent(Codec.STRING));
 
     private static <T> DeferredHolder<DataComponentType<?>, DataComponentType<T>> register(String name,

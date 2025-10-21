@@ -15,7 +15,6 @@ public class Utils {
     }
 
     public static void messagePlayer(Player player, String message, Boolean statusBar) {
-        statusBar = statusBar || true;
         player.displayClientMessage(Component.literal(message), statusBar);
     }
 }
