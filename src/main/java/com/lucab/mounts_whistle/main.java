@@ -24,7 +24,7 @@ public class main {
 
         modEventBus.addListener(this::addCreative);
 
-        modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
+        modContainer.registerConfig(ModConfig.Type.SERVER, Config.SPEC);
     }
 
     public void addCreative(BuildCreativeModeTabContentsEvent event) {

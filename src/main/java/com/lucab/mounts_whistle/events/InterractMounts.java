@@ -9,24 +9,37 @@ import com.lucab.mounts_whistle.data_components.WhistleDataComponents;
 import com.lucab.mounts_whistle.items.ItemsRegistry;
 
 import net.minecraft.world.entity.animal.horse.Mule;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.animal.horse.Donkey;
 import net.minecraft.world.entity.animal.horse.Horse;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Entity.RemovalReason;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.animal.horse.AbstractHorse;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 
 @EventBusSubscriber(modid = Utils.MOD_ID)
 public class InterractMounts {
+
+    // public static List<Class<? extends AbstractHorse>> mounts_list =
+    // List.of(Mule.class, Donkey.class, Horse.class);
+    // public static List<? extends String> mounts_list = Config.MOUNTS_LIST.get();
+
+    private static String getNamespace(String key) {
+        var split = key.replace(".", ":").split(":");
+        return String.format("%s:%s", split[1], split[2]);
+    }
+
     @SubscribeEvent
     public static void mountsInterract(PlayerInteractEvent.EntityInteract event) {
-        var mounts = List.of(Mule.class, Donkey.class, Horse.class);
         var mounts_food = List.of(Items.WHEAT, Items.GOLDEN_APPLE, Items.ENCHANTED_GOLDEN_APPLE);
         var player = event.getEntity();
         var target = event.getTarget();
@@ -35,7 +48,7 @@ public class InterractMounts {
         if (event.getLevel().isClientSide()) {
             return;
         }
-        if (!mounts.contains(target.getClass())) {
+        if (!Config.MOUNTS_LIST.get().contains(getNamespace(target.getType().toString()))) {
             return;
         }
 
@@ -48,6 +61,7 @@ public class InterractMounts {
                 ((AbstractHorse) target).equipSaddle(new ItemStack(Items.SADDLE), null);
                 item.set(WhistleDataComponents.HAS_MOUNT, true);
                 item.set(WhistleDataComponents.MOUNT_UUID, target.getUUID().toString());
+                item.set(WhistleDataComponents.MOUNT_TYPE, target.getType().toString());
                 if (target instanceof Horse horse) {
                     item.set(WhistleDataComponents.MOUNT_VARIANT, ((Horse) horse).getVariant());
                 }
@@ -111,6 +125,7 @@ public class InterractMounts {
                 if (entity != null) {
                     item.set(WhistleDataComponents.MOUNT_TYPE, entity.getType().toString());
                     entity.remove(RemovalReason.DISCARDED);
+                    dropMountInventory(level, (LivingEntity) entity);
                 } else {
                     var mount_type = item.get(WhistleDataComponents.MOUNT_TYPE);
                     Entity mount = new Horse(EntityType.HORSE, serverLevel);
@@ -137,6 +152,43 @@ public class InterractMounts {
                     item.set(WhistleDataComponents.MOUNT_UUID, mount.getUUID().toString());
                 }
             }
+        }
+    }
+
+    @SubscribeEvent
+    public static void mountsDie(LivingDeathEvent event) {
+        var level = event.getEntity().level();
+        var target = event.getEntity();
+
+        if (!Config.MOUNTS_LIST.get().contains(getNamespace(target.getType().toString()))) {
+            return;
+        }
+
+        if (((AbstractHorse) target).isTamed()) {
+            dropMountInventory(level, target);
+            event.setCanceled(true);
+            target.kill();
+        }
+    }
+
+    private static void dropMountInventory(Level level, LivingEntity target) {
+        // Drop armor
+        level.addFreshEntity(new ItemEntity(level, target.getX(), target.getY(), target.getZ(),
+                ((AbstractHorse) target).getBodyArmorItem().copy()));
+
+        // Drop chest container items
+        var container = ((AbstractHorse) target).getInventory();
+        if (container.getContainerSize() > 1) {
+            for (int i = 1; i < container.getContainerSize(); i++) {
+                var item = container.getItem(i);
+                if (!item.isEmpty()) {
+                    var container_item_entity = new ItemEntity(level, target.getX(),
+                            target.getY(), target.getZ(), item.copy());
+                    level.addFreshEntity(container_item_entity);
+                }
+            }
+            level.addFreshEntity(new ItemEntity(level, target.getX(), target.getY(), target.getZ(),
+                    Items.CHEST.getDefaultInstance()));
         }
     }
 }
