@@ -48,6 +48,9 @@ public class InterractMounts {
                 ((AbstractHorse) target).equipSaddle(new ItemStack(Items.SADDLE), null);
                 item.set(WhistleDataComponents.HAS_MOUNT, true);
                 item.set(WhistleDataComponents.MOUNT_UUID, target.getUUID().toString());
+                if (target instanceof Horse horse) {
+                    item.set(WhistleDataComponents.MOUNT_VARIANT, ((Horse) horse).getVariant());
+                }
             } else {
                 Utils.messagePlayer(player, "This whistle is already bound to a mount");
             }
@@ -95,7 +98,7 @@ public class InterractMounts {
             return;
 
         if (!item.getOrDefault(WhistleDataComponents.HAS_MOUNT, false)) {
-            Utils.messagePlayer(player, "Whistle has not a mounts bound", false);
+            Utils.messagePlayer(player, "Whistle has not a mounts bound");
             event.setCanceled(true);
             return;
         }
@@ -128,6 +131,8 @@ public class InterractMounts {
                     mount.setPos(player.getX(), player.getY(), player.getZ());
                     ((AbstractHorse) mount).tameWithName(player);
                     ((AbstractHorse) mount).equipSaddle(new ItemStack(Items.SADDLE), null);
+                    if (mount instanceof Horse horse)
+                        horse.setVariant(item.get(WhistleDataComponents.MOUNT_VARIANT));
                     level.addFreshEntity(mount);
                     item.set(WhistleDataComponents.MOUNT_UUID, mount.getUUID().toString());
                 }

@@ -7,6 +7,7 @@ import com.mojang.serialization.Codec;
 
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.world.entity.animal.horse.Variant;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -26,6 +27,9 @@ public class WhistleDataComponents {
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<String>> MOUNT_TYPE = register(
             "mount_type",
             builder -> builder.persistent(Codec.STRING));
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Variant>> MOUNT_VARIANT = register(
+            "mount_variant",
+            builder -> builder.persistent(Variant.CODEC));
 
     private static <T> DeferredHolder<DataComponentType<?>, DataComponentType<T>> register(String name,
             UnaryOperator<DataComponentType.Builder<T>> builderOperator) {
