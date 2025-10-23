@@ -1,0 +1,11 @@
+{
+  "item.mounts_whistle.mounts_whistle": "Fischietto per Cavalcature",
+  "tooltip.item.mounts_whistle.mounts_whistle.require_shift_down": "Tieni premuto §3SHIFT§r per maggiori informazioni",
+  "tooltip.item.mounts_whistle.mounts_whistle": "Click destro su una cavalcatura per addomesticarla\nClick destro in aria per evocare/richiamare la tua cavalcatura\nShift + Click destro per attivare/disattivare la Cavalcatura Automatica",
+  "message.mounts_whistle.auto_ride_enabled": "Cavalcatura Automatica: Abilitata",
+  "message.mounts_whistle.auto_ride_disabled": "Cavalcatura Automatica: Disabilitata",
+  "message.mounts_whistle.no_mounts_bound": "Nessuna cavalcatura è associata a questo fischietto",
+  "message.mounts_whistle.mount_not_own": "Questa cavalcatura non è tua",
+  "message.mounts_whistle.whistle_already_bound": "Questo fischietto è già associato a una cavalcatura",
+  "message.mounts_whistle.mount_already_tamed": "Questa cavalcatura è già addomesticata"
+}

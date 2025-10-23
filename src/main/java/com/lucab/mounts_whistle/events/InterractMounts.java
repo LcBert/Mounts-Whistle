@@ -12,6 +12,7 @@ import net.minecraft.world.entity.animal.horse.Mule;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.animal.horse.Donkey;
 import net.minecraft.world.entity.animal.horse.Horse;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Entity.RemovalReason;
@@ -66,12 +67,17 @@ public class InterractMounts {
                     item.set(WhistleDataComponents.MOUNT_VARIANT, ((Horse) horse).getVariant());
                 }
             } else {
-                Utils.messagePlayer(player, "This whistle is already bound to a mount");
+                player.displayClientMessage(
+                        Component.translatable("message.mounts_whistle.whistle_already_bound"),
+                        true);
             }
         }
 
         if (is_whistle_equip && mounts_is_tamed) {
-            Utils.messagePlayer(player, "This mount is already tamed");
+            player.displayClientMessage(
+                    Component.translatable("message.mounts_whistle.mount_already_tamed"), true);
+            event.setCanceled(true);
+            return;
         }
 
         /**
@@ -79,9 +85,11 @@ public class InterractMounts {
          * This will cancel the event when a player try
          * to ride a mount that is not his own
          */
-        if (mounts_is_tamed && Boolean.parseBoolean(Utils.config.ONLY_RIDE_OWNER.get("value").toString())) {
+        if (mounts_is_tamed && Utils.config.ONLY_RIDE_OWNER.get("value").equals(true)) {
             if (!((AbstractHorse) target).getOwnerUUID().equals(player.getUUID())) {
-                Utils.messagePlayer(player, "This mount is not your");
+                player.displayClientMessage(
+                        Component.translatable("message.mounts_whistle.mount_not_own"), true);
+
                 event.setCanceled(true);
                 return;
             }
@@ -119,15 +127,18 @@ public class InterractMounts {
             item.set(WhistleDataComponents.AUTO_RIDE, !item.getOrDefault(WhistleDataComponents.AUTO_RIDE, false));
             // TODO: Make colored text
             if (item.get(WhistleDataComponents.AUTO_RIDE)) {
-                Utils.messagePlayer(player, "Auto ride: Enabled");
+                player.displayClientMessage(
+                        Component.translatable("message.mounts_whistle.auto_ride_enabled"), true);
             } else {
-                Utils.messagePlayer(player, "Auto ride: Disabled");
+                player.displayClientMessage(
+                        Component.translatable("message.mounts_whistle.auto_ride_disabled"), true);
             }
             return;
         }
 
         if (!item.getOrDefault(WhistleDataComponents.HAS_MOUNT, false)) {
-            Utils.messagePlayer(player, "Whistle has not a mounts bound");
+            player.displayClientMessage(
+                    Component.translatable("message.mounts_whistle.no_mounts_bound"), true);
             event.setCanceled(true);
             return;
         }
