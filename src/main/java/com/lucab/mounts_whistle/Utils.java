@@ -9,6 +9,7 @@ import net.minecraft.world.entity.player.Player;
 public class Utils {
     public static final String MOD_ID = "mounts_whistle";
     public static final Logger LOGGER = LogUtils.getLogger();
+    public static ConfigSchema config;
 
     public static void messagePlayer(Player player, String message) {
         player.displayClientMessage(Component.literal(message), true);

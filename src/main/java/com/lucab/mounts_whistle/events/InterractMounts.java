@@ -3,7 +3,7 @@ package com.lucab.mounts_whistle.events;
 import java.util.List;
 import java.util.UUID;
 
-import com.lucab.mounts_whistle.Config;
+import com.lucab.mounts_whistle.Functions;
 import com.lucab.mounts_whistle.Utils;
 import com.lucab.mounts_whistle.data_components.WhistleDataComponents;
 import com.lucab.mounts_whistle.items.ItemsRegistry;
@@ -29,10 +29,6 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 @EventBusSubscriber(modid = Utils.MOD_ID)
 public class InterractMounts {
 
-    // public static List<Class<? extends AbstractHorse>> mounts_list =
-    // List.of(Mule.class, Donkey.class, Horse.class);
-    // public static List<? extends String> mounts_list = Config.MOUNTS_LIST.get();
-
     private static String getNamespace(String key) {
         var split = key.replace(".", ":").split(":");
         return String.format("%s:%s", split[1], split[2]);
@@ -45,10 +41,14 @@ public class InterractMounts {
         var target = event.getTarget();
         var item = event.getItemStack();
 
+        System.out.println(Utils.config.MOUNTS_LIST.toString());
+
         if (event.getLevel().isClientSide()) {
             return;
         }
-        if (!Config.MOUNTS_LIST.get().contains(getNamespace(target.getType().toString()))) {
+
+        if (!Functions.listContains(Utils.config.MOUNTS_LIST.get("value"),
+                getNamespace(target.getType().toString()))) {
             return;
         }
 
@@ -79,7 +79,7 @@ public class InterractMounts {
          * This will cancel the event when a player try
          * to ride a mount that is not his own
          */
-        if (mounts_is_tamed && Config.ONLY_RIDE_OWNER.getAsBoolean()) {
+        if (mounts_is_tamed && Boolean.parseBoolean(Utils.config.ONLY_RIDE_OWNER.get("value").toString())) {
             if (!((AbstractHorse) target).getOwnerUUID().equals(player.getUUID())) {
                 Utils.messagePlayer(player, "This mount is not your");
                 event.setCanceled(true);
@@ -110,6 +110,21 @@ public class InterractMounts {
 
         if (event.getLevel().isClientSide())
             return;
+
+        if (!item.getItem().equals(ItemsRegistry.MOUNTS_WHISTLE.asItem())) {
+            return;
+        }
+
+        if (player.isShiftKeyDown() && Utils.config.ENABLE_AUTO_RIDE.get("value").equals(true)) {
+            item.set(WhistleDataComponents.AUTO_RIDE, !item.getOrDefault(WhistleDataComponents.AUTO_RIDE, false));
+            // TODO: Make colored text
+            if (item.get(WhistleDataComponents.AUTO_RIDE)) {
+                Utils.messagePlayer(player, "Auto ride: Enabled");
+            } else {
+                Utils.messagePlayer(player, "Auto ride: Disabled");
+            }
+            return;
+        }
 
         if (!item.getOrDefault(WhistleDataComponents.HAS_MOUNT, false)) {
             Utils.messagePlayer(player, "Whistle has not a mounts bound");
@@ -150,6 +165,10 @@ public class InterractMounts {
                         horse.setVariant(item.get(WhistleDataComponents.MOUNT_VARIANT));
                     level.addFreshEntity(mount);
                     item.set(WhistleDataComponents.MOUNT_UUID, mount.getUUID().toString());
+                    if (item.getOrDefault(WhistleDataComponents.AUTO_RIDE, false) &&
+                            Utils.config.ENABLE_AUTO_RIDE.get("value").equals(true)) {
+                        player.startRiding(mount);
+                    }
                 }
             }
         }
@@ -160,7 +179,7 @@ public class InterractMounts {
         var level = event.getEntity().level();
         var target = event.getEntity();
 
-        if (!Config.MOUNTS_LIST.get().contains(getNamespace(target.getType().toString()))) {
+        if (!Functions.listContains(Utils.config.MOUNTS_LIST.get("value"), getNamespace(target.getType().toString()))) {
             return;
         }
 

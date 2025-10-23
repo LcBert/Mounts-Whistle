@@ -8,7 +8,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.config.ModConfig;
+import net.neoforged.fml.loading.FMLPaths;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
@@ -24,7 +24,7 @@ public class main {
 
         modEventBus.addListener(this::addCreative);
 
-        modContainer.registerConfig(ModConfig.Type.SERVER, Config.SPEC);
+        Utils.config = ConfigSchema.load(FMLPaths.CONFIGDIR.get().resolve(Utils.MOD_ID + ".json").toFile());
     }
 
     public void addCreative(BuildCreativeModeTabContentsEvent event) {

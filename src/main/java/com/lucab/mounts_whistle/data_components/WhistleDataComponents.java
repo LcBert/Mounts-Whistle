@@ -27,9 +27,14 @@ public class WhistleDataComponents {
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<String>> MOUNT_TYPE = register(
             "mount_type",
             builder -> builder.persistent(Codec.STRING));
+
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Variant>> MOUNT_VARIANT = register(
             "mount_variant",
             builder -> builder.persistent(Variant.CODEC));
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Boolean>> AUTO_RIDE = register(
+            "auto_ride",
+            builder -> builder.persistent(Codec.BOOL));
 
     private static <T> DeferredHolder<DataComponentType<?>, DataComponentType<T>> register(String name,
             UnaryOperator<DataComponentType.Builder<T>> builderOperator) {
