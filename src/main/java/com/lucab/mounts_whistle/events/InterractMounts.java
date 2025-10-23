@@ -3,6 +3,8 @@ package com.lucab.mounts_whistle.events;
 import java.util.List;
 import java.util.UUID;
 
+import javax.annotation.Nullable;
+
 import com.lucab.mounts_whistle.Functions;
 import com.lucab.mounts_whistle.Utils;
 import com.lucab.mounts_whistle.data_components.WhistleDataComponents;
@@ -42,8 +44,6 @@ public class InterractMounts {
         var target = event.getTarget();
         var item = event.getItemStack();
 
-        System.out.println(Utils.config.MOUNTS_LIST.toString());
-
         if (event.getLevel().isClientSide()) {
             return;
         }
@@ -59,7 +59,8 @@ public class InterractMounts {
         if (is_whistle_equip && !mounts_is_tamed) {
             if (!item.getOrDefault(WhistleDataComponents.HAS_MOUNT, false)) {
                 ((AbstractHorse) target).tameWithName(player);
-                ((AbstractHorse) target).equipSaddle(new ItemStack(Items.SADDLE), null);
+                if (Utils.config.EQUIP_SADDLE.get("value").equals(true))
+                    ((AbstractHorse) target).equipSaddle(new ItemStack(Items.SADDLE), null);
                 item.set(WhistleDataComponents.HAS_MOUNT, true);
                 item.set(WhistleDataComponents.MOUNT_UUID, target.getUUID().toString());
                 item.set(WhistleDataComponents.MOUNT_TYPE, target.getType().toString());
@@ -125,7 +126,6 @@ public class InterractMounts {
 
         if (player.isShiftKeyDown() && Utils.config.ENABLE_AUTO_RIDE.get("value").equals(true)) {
             item.set(WhistleDataComponents.AUTO_RIDE, !item.getOrDefault(WhistleDataComponents.AUTO_RIDE, false));
-            // TODO: Make colored text
             if (item.get(WhistleDataComponents.AUTO_RIDE)) {
                 player.displayClientMessage(
                         Component.translatable("message.mounts_whistle.auto_ride_enabled"), true);
@@ -151,7 +151,7 @@ public class InterractMounts {
                 if (entity != null) {
                     item.set(WhistleDataComponents.MOUNT_TYPE, entity.getType().toString());
                     entity.remove(RemovalReason.DISCARDED);
-                    dropMountInventory(level, (LivingEntity) entity);
+                    dropMountInventory(level, (LivingEntity) entity, item);
                 } else {
                     var mount_type = item.get(WhistleDataComponents.MOUNT_TYPE);
                     Entity mount = new Horse(EntityType.HORSE, serverLevel);
@@ -171,9 +171,21 @@ public class InterractMounts {
                     }
                     mount.setPos(player.getX(), player.getY(), player.getZ());
                     ((AbstractHorse) mount).tameWithName(player);
-                    ((AbstractHorse) mount).equipSaddle(new ItemStack(Items.SADDLE), null);
-                    if (mount instanceof Horse horse)
+                    if (Utils.config.EQUIP_SADDLE.get("value").equals(true) ||
+                            item.getOrDefault(WhistleDataComponents.SADDLE_ITEM, false).booleanValue())
+                        ((AbstractHorse) mount).equipSaddle(new ItemStack(Items.SADDLE), null);
+                    if (mount instanceof Horse horse) {
                         horse.setVariant(item.get(WhistleDataComponents.MOUNT_VARIANT));
+                        if (Utils.config.DROP_ARMOR.get("value").equals(false) ||
+                                item.getOrDefault(WhistleDataComponents.ARMOR_ITEM, null) != null) {
+                            var armor_item = item.getOrDefault(WhistleDataComponents.ARMOR_ITEM, null);
+                            if (armor_item != null) {
+                                player.displayClientMessage(Component.literal("caio"), false);
+                                horse.equipBodyArmor(player, armor_item.getDefaultInstance());
+                            }
+                        }
+                    }
+
                     level.addFreshEntity(mount);
                     item.set(WhistleDataComponents.MOUNT_UUID, mount.getUUID().toString());
                     if (item.getOrDefault(WhistleDataComponents.AUTO_RIDE, false) &&
@@ -183,6 +195,7 @@ public class InterractMounts {
                 }
             }
         }
+
     }
 
     @SubscribeEvent
@@ -195,25 +208,51 @@ public class InterractMounts {
         }
 
         if (((AbstractHorse) target).isTamed()) {
-            dropMountInventory(level, target);
+            dropMountInventory(level, target, null);
             event.setCanceled(true);
             target.kill();
         }
     }
 
-    private static void dropMountInventory(Level level, LivingEntity target) {
+    private static void dropMountInventory(Level level, LivingEntity target, @Nullable ItemStack item) {
+        // Drop saddle
+        if (Utils.config.DROP_SADDLE.get("value").equals(true)) {
+            if (((AbstractHorse) target).isSaddled()) {
+                level.addFreshEntity(new ItemEntity(level, target.getX(), target.getY(), target.getZ(),
+                        Items.SADDLE.getDefaultInstance()));
+            }
+            if (item != null) {
+                item.remove(WhistleDataComponents.SADDLE_ITEM);
+            }
+        } else {
+            if (item != null) {
+                item.set(WhistleDataComponents.SADDLE_ITEM, ((AbstractHorse) target).isSaddled());
+            }
+
+        }
+
         // Drop armor
-        level.addFreshEntity(new ItemEntity(level, target.getX(), target.getY(), target.getZ(),
-                ((AbstractHorse) target).getBodyArmorItem().copy()));
+        if (Utils.config.DROP_ARMOR.get("value").equals(true)) {
+            level.addFreshEntity(new ItemEntity(level, target.getX(), target.getY(), target.getZ(),
+                    ((AbstractHorse) target).getBodyArmorItem().copy()));
+            if (item != null) {
+                item.remove(WhistleDataComponents.ARMOR_ITEM);
+            }
+        } else {
+            if (item != null) {
+                item.set(WhistleDataComponents.ARMOR_ITEM, ((AbstractHorse) target).getBodyArmorItem().getItem());
+            }
+
+        }
 
         // Drop chest container items
         var container = ((AbstractHorse) target).getInventory();
         if (container.getContainerSize() > 1) {
             for (int i = 1; i < container.getContainerSize(); i++) {
-                var item = container.getItem(i);
-                if (!item.isEmpty()) {
+                var item_content = container.getItem(i);
+                if (!item_content.isEmpty()) {
                     var container_item_entity = new ItemEntity(level, target.getX(),
-                            target.getY(), target.getZ(), item.copy());
+                            target.getY(), target.getZ(), item_content.copy());
                     level.addFreshEntity(container_item_entity);
                 }
             }

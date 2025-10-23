@@ -6,8 +6,10 @@ import com.lucab.mounts_whistle.Utils;
 import com.mojang.serialization.Codec;
 
 import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.animal.horse.Variant;
+import net.minecraft.world.item.Item;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -35,6 +37,14 @@ public class WhistleDataComponents {
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Boolean>> AUTO_RIDE = register(
             "auto_ride",
             builder -> builder.persistent(Codec.BOOL));
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Boolean>> SADDLE_ITEM = register(
+            "saddle_item",
+            builder -> builder.persistent(Codec.BOOL));
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Item>> ARMOR_ITEM = register(
+            "armor_item",
+            builder -> builder.persistent(BuiltInRegistries.ITEM.byNameCodec()));
 
     private static <T> DeferredHolder<DataComponentType<?>, DataComponentType<T>> register(String name,
             UnaryOperator<DataComponentType.Builder<T>> builderOperator) {

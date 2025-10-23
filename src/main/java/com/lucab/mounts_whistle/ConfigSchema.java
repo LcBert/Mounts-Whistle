@@ -21,9 +21,17 @@ public class ConfigSchema {
             .create();
 
     @Expose
+    public Map<String, Object> MOUNTS_LIST = new HashMap<String, Object>() {
+        {
+            put("_comment", "Define the list of mounts consider by the whistle");
+            put("value", List.of("minecraft:mule", "minecraft:donkey", "minecraft:horse"));
+        }
+    };
+
+    @Expose
     public Map<String, Object> ONLY_RIDE_OWNER = new HashMap<String, Object>() {
         {
-            put("//", "Define if a player can ride a mount that is not their own");
+            put("_comment", "Define if a player can ride a mount that is not their own");
             put("value", true);
         }
     };
@@ -31,16 +39,40 @@ public class ConfigSchema {
     @Expose
     public Map<String, Object> ENABLE_AUTO_RIDE = new HashMap<String, Object>() {
         {
-            put("//", "Define if a player can automatically ride their mount");
+            put("_comment", "Define if a player can automatically ride their mount");
             put("value", true);
         }
     };
 
     @Expose
-    public Map<String, Object> MOUNTS_LIST = new HashMap<String, Object>() {
+    public Map<String, Object> EQUIP_SADDLE = new HashMap<String, Object>() {
         {
-            put("//", "Define the list of mounts consider by the whistle");
-            put("value", List.of("minecraft:mule", "minecraft:donkey", "minecraft:horse"));
+            put("_comment", "Define if mount spawn with a saddle equiped");
+            put("value", true);
+        }
+    };
+
+    @Expose
+    public Map<String, Object> DROP_SADDLE = new HashMap<String, Object>() {
+        {
+            put("_comment", "Define if mount drops the saddle when despawned or killed");
+            put("value", false);
+        }
+    };
+
+    @Expose
+    public Map<String, Object> DROP_ARMOR = new HashMap<String, Object>() {
+        {
+            put("_comment", "Define if mount drops the armor when despawned or killed");
+            put("value", true);
+        }
+    };
+
+    @Expose
+    public Map<String, Object> DROP_CHEST_CONTENT = new HashMap<String, Object>() {
+        {
+            put("_comment", "Define if mount drops the chest content when despawned or killed");
+            put("value", true);
         }
     };
 
