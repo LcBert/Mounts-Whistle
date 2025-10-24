@@ -18,6 +18,10 @@ public class WhistleDataComponents {
     public static final DeferredRegister<DataComponentType<?>> DATA_COMPONENT_TYPES = DeferredRegister
             .create(Registries.DATA_COMPONENT_TYPE, Utils.MOD_ID);
 
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<String>> WHISTLE_OWNER_UUID = register(
+            "whistle_owner_uuid",
+            builder -> builder.persistent(Codec.STRING));
+
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Boolean>> HAS_MOUNT = register(
             "has_mount",
             builder -> builder.persistent(Codec.BOOL));

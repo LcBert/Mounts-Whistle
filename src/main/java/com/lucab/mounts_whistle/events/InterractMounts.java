@@ -31,7 +31,6 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 
 @EventBusSubscriber(modid = Utils.MOD_ID)
 public class InterractMounts {
-
     private static String getNamespace(String key) {
         var split = key.replace(".", ":").split(":");
         return String.format("%s:%s", split[1], split[2]);
@@ -67,6 +66,7 @@ public class InterractMounts {
                 if (target instanceof Horse horse) {
                     item.set(WhistleDataComponents.MOUNT_VARIANT, ((Horse) horse).getVariant());
                 }
+                item.set(WhistleDataComponents.WHISTLE_OWNER_UUID, player.getUUID().toString());
             } else {
                 player.displayClientMessage(
                         Component.translatable("message.mounts_whistle.whistle_already_bound"),
@@ -153,6 +153,11 @@ public class InterractMounts {
                     entity.remove(RemovalReason.DISCARDED);
                     dropMountInventory(level, (LivingEntity) entity, item);
                 } else {
+                    if (Utils.config.WHISTLE_SHARE.get("value").equals(false) &&
+                            !item.get(WhistleDataComponents.WHISTLE_OWNER_UUID).equals(player.getUUID().toString())) {
+                        player.displayClientMessage(Component.literal("message.mounts_whistle.whistle_not_own"), true);
+                        return;
+                    }
                     var mount_type = item.get(WhistleDataComponents.MOUNT_TYPE);
                     Entity mount = new Horse(EntityType.HORSE, serverLevel);
                     switch (mount_type) {
@@ -180,7 +185,6 @@ public class InterractMounts {
                                 item.getOrDefault(WhistleDataComponents.ARMOR_ITEM, null) != null) {
                             var armor_item = item.getOrDefault(WhistleDataComponents.ARMOR_ITEM, null);
                             if (armor_item != null) {
-                                player.displayClientMessage(Component.literal("caio"), false);
                                 horse.equipBodyArmor(player, armor_item.getDefaultInstance());
                             }
                         }

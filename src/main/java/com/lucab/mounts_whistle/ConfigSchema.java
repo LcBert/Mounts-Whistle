@@ -29,6 +29,14 @@ public class ConfigSchema {
     };
 
     @Expose
+    public Map<String, Object> WHISTLE_SHARE = new HashMap<String, Object>() {
+        {
+            put("_comment", "Define if the whistle can be shared between players");
+            put("value", true);
+        }
+    };
+
+    @Expose
     public Map<String, Object> ONLY_RIDE_OWNER = new HashMap<String, Object>() {
         {
             put("_comment", "Define if a player can ride a mount that is not their own");
