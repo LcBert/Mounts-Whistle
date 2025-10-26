@@ -1,0 +1,7 @@
+{
+    "mounts_whistle_use": {
+        "sounds": [
+            "mounts_whistle:mounts_whistle_use"
+        ]
+    }
+}

@@ -2,6 +2,7 @@ package com.lucab.mounts_whistle;
 
 import com.lucab.mounts_whistle.data_components.WhistleDataComponents;
 import com.lucab.mounts_whistle.items.ItemsRegistry;
+import com.lucab.mounts_whistle.sounds.ModSounds;
 
 import net.minecraft.world.item.CreativeModeTabs;
 import net.neoforged.bus.api.IEventBus;
@@ -21,6 +22,7 @@ public class main {
         ItemsRegistry.ITEM_REGISTRY.register(modEventBus);
 
         WhistleDataComponents.register(modEventBus);
+        ModSounds.SOUND_EVENTS.register(modEventBus);
 
         modEventBus.addListener(this::addCreative);
 

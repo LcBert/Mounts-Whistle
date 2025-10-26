@@ -9,6 +9,7 @@ import com.lucab.mounts_whistle.Functions;
 import com.lucab.mounts_whistle.Utils;
 import com.lucab.mounts_whistle.data_components.WhistleDataComponents;
 import com.lucab.mounts_whistle.items.ItemsRegistry;
+import com.lucab.mounts_whistle.sounds.ModSounds;
 
 import net.minecraft.world.entity.animal.horse.Mule;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -16,6 +17,7 @@ import net.minecraft.world.entity.animal.horse.Donkey;
 import net.minecraft.world.entity.animal.horse.Horse;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Entity.RemovalReason;
 import net.minecraft.world.entity.EntityType;
@@ -196,6 +198,9 @@ public class InterractMounts {
                             Utils.config.ENABLE_AUTO_RIDE.get("value").equals(true)) {
                         player.startRiding(mount);
                     }
+
+                    level.playSound(null, player.getX(), player.getY(), player.getZ(), ModSounds.WHISTLE_USE.get(),
+                            SoundSource.PLAYERS);
                 }
             }
         }
