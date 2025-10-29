@@ -15,6 +15,7 @@ import net.minecraft.world.entity.animal.horse.Mule;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.animal.horse.Donkey;
 import net.minecraft.world.entity.animal.horse.Horse;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
@@ -28,6 +29,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.event.entity.item.ItemTossEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 
@@ -36,6 +38,25 @@ public class InterractMounts {
     private static String getNamespace(String key) {
         var split = key.replace(".", ":").split(":");
         return String.format("%s:%s", split[1], split[2]);
+    }
+
+    @SubscribeEvent
+    public static void itemDrop(ItemTossEvent event) {
+        var level = event.getPlayer().level();
+        var item = event.getEntity().getItem();
+        if (Utils.config.DESPAWN_WHEN_DROP.get("value").equals(false))
+            return;
+
+        if (item.getItem().equals(ItemsRegistry.MOUNTS_WHISTLE.asItem())) {
+            var item_mounts_uuid = item.get(WhistleDataComponents.MOUNT_UUID);
+
+            if (level instanceof ServerLevel serverLevel) {
+                Entity entity = serverLevel.getEntity(UUID.fromString(item_mounts_uuid));
+                if (entity != null) {
+                    despawnMount(level, (LivingEntity) entity, item);
+                }
+            }
+        }
     }
 
     @SubscribeEvent
@@ -151,9 +172,8 @@ public class InterractMounts {
             if (level instanceof ServerLevel serverLevel) {
                 Entity entity = serverLevel.getEntity(UUID.fromString(item_mounts_uuid));
                 if (entity != null) {
-                    item.set(WhistleDataComponents.MOUNT_TYPE, entity.getType().toString());
-                    entity.remove(RemovalReason.DISCARDED);
-                    dropMountInventory(level, (LivingEntity) entity, item);
+                    despawnMount(level, (LivingEntity) entity, item);
+                    player.swing(event.getHand(), true);
                 } else {
                     if (Utils.config.WHISTLE_SHARE.get("value").equals(false) &&
                             !item.get(WhistleDataComponents.WHISTLE_OWNER_UUID).equals(player.getUUID().toString())) {
@@ -198,7 +218,7 @@ public class InterractMounts {
                             Utils.config.ENABLE_AUTO_RIDE.get("value").equals(true)) {
                         player.startRiding(mount);
                     }
-
+                    player.swing(event.getHand(), true);
                     level.playSound(null, player.getX(), player.getY(), player.getZ(), ModSounds.WHISTLE_USE.get(),
                             SoundSource.PLAYERS);
                 }
@@ -221,6 +241,15 @@ public class InterractMounts {
             event.setCanceled(true);
             target.kill();
         }
+    }
+
+    private static void despawnMount(Level level, LivingEntity target, @Nullable ItemStack item) {
+        item.set(WhistleDataComponents.MOUNT_TYPE, target.getType().toString());
+        target.remove(RemovalReason.DISCARDED);
+        dropMountInventory(level, (LivingEntity) target, item);
+        ((ServerLevel) level).sendParticles(ParticleTypes.SMOKE,
+                target.getX(), target.getY() + 0.5, target.getZ(),
+                100, 0.5, 0.5, 0.5, 0.05);
     }
 
     private static void dropMountInventory(Level level, LivingEntity target, @Nullable ItemStack item) {

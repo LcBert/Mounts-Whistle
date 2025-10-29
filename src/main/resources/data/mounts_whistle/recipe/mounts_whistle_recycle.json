@@ -1,0 +1,12 @@
+{
+    "type": "minecraft:crafting_shapeless",
+    "ingredients": [
+        {
+            "item": "mounts_whistle:mounts_whistle"
+        }
+    ],
+    "result": {
+        "id": "mounts_whistle:mounts_whistle",
+        "count": 1
+    }
+}

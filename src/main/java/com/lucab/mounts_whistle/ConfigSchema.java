@@ -84,6 +84,14 @@ public class ConfigSchema {
         }
     };
 
+    @Expose
+    public Map<String, Object> DESPAWN_WHEN_DROP = new HashMap<String, Object>() {
+        {
+            put("_comment", "Define if mount despawn when player drop whistle");
+            put("value", true);
+        }
+    };
+
     public static ConfigSchema load(File configFile) {
         ConfigSchema config = new ConfigSchema();
         if (configFile.exists()) {

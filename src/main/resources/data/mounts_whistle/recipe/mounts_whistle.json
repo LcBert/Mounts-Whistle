@@ -1,0 +1,23 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "#X#",
+        "#D#",
+        " # "
+    ],
+    "key": {
+        "#": {
+            "item": "minecraft:gold_ingot"
+        },
+        "X": {
+            "item": "minecraft:name_tag"
+        },
+        "D": {
+            "item": "minecraft:golden_apple"
+        }
+    },
+    "result": {
+        "id": "mounts_whistle:mounts_whistle",
+        "count": 1
+    }
+}
