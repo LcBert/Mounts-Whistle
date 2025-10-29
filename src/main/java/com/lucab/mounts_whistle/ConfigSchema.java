@@ -53,6 +53,22 @@ public class ConfigSchema {
     };
 
     @Expose
+    public Map<String, Object> DESPAWN_WHEN_DROP = new HashMap<String, Object>() {
+        {
+            put("_comment", "Define if mount despawn when player drop whistle");
+            put("value", true);
+        }
+    };
+
+    @Expose
+    public Map<String, Object> RENAME_MOUNT = new HashMap<String, Object>() {
+        {
+            put("_comment", "Define if mount name is changed with whistle custom name");
+            put("value", true);
+        }
+    };
+
+    @Expose
     public Map<String, Object> EQUIP_SADDLE = new HashMap<String, Object>() {
         {
             put("_comment", "Define if mount spawn with a saddle equiped");
@@ -80,14 +96,6 @@ public class ConfigSchema {
     public Map<String, Object> DROP_CHEST_CONTENT = new HashMap<String, Object>() {
         {
             put("_comment", "Define if mount drops the chest content when despawned or killed");
-            put("value", true);
-        }
-    };
-
-    @Expose
-    public Map<String, Object> DESPAWN_WHEN_DROP = new HashMap<String, Object>() {
-        {
-            put("_comment", "Define if mount despawn when player drop whistle");
             put("value", true);
         }
     };

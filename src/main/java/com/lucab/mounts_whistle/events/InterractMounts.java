@@ -15,6 +15,7 @@ import net.minecraft.world.entity.animal.horse.Mule;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.animal.horse.Donkey;
 import net.minecraft.world.entity.animal.horse.Horse;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -90,6 +91,8 @@ public class InterractMounts {
                     item.set(WhistleDataComponents.MOUNT_VARIANT, ((Horse) horse).getVariant());
                 }
                 item.set(WhistleDataComponents.WHISTLE_OWNER_UUID, player.getUUID().toString());
+
+                renameMount(target, item);
             } else {
                 player.displayClientMessage(
                         Component.translatable("message.mounts_whistle.whistle_already_bound"),
@@ -218,13 +221,15 @@ public class InterractMounts {
                             Utils.config.ENABLE_AUTO_RIDE.get("value").equals(true)) {
                         player.startRiding(mount);
                     }
+
+                    renameMount(mount, item);
+
                     player.swing(event.getHand(), true);
                     level.playSound(null, player.getX(), player.getY(), player.getZ(), ModSounds.WHISTLE_USE.get(),
                             SoundSource.PLAYERS);
                 }
             }
         }
-
     }
 
     @SubscribeEvent
@@ -240,6 +245,14 @@ public class InterractMounts {
             dropMountInventory(level, target, null);
             event.setCanceled(true);
             target.kill();
+        }
+    }
+
+    private static void renameMount(Entity target, ItemStack item) {
+        if (Utils.config.RENAME_MOUNT.get("value").equals(true)) {
+            if (item.has(DataComponents.CUSTOM_NAME)) {
+                target.setCustomName(item.getHoverName());
+            }
         }
     }
 
