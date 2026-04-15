@@ -2,7 +2,7 @@ package com.lucab.mounts_whistle.data_components;
 
 import java.util.function.UnaryOperator;
 
-import com.lucab.mounts_whistle.Utils;
+import com.lucab.mounts_whistle.MountsWhistle;
 import com.mojang.serialization.Codec;
 
 import net.minecraft.core.component.DataComponentType;
@@ -16,7 +16,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 public class WhistleDataComponents {
     public static final DeferredRegister<DataComponentType<?>> DATA_COMPONENT_TYPES = DeferredRegister
-            .create(Registries.DATA_COMPONENT_TYPE, Utils.MOD_ID);
+            .create(Registries.DATA_COMPONENT_TYPE, MountsWhistle.MOD_ID);
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<String>> WHISTLE_OWNER_UUID = register(
             "whistle_owner_uuid",
@@ -37,6 +37,10 @@ public class WhistleDataComponents {
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Variant>> MOUNT_VARIANT = register(
             "mount_variant",
             builder -> builder.persistent(Variant.CODEC));
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<String>> MOUNT_MARKINGS = register(
+            "mount_markings",
+            builder -> builder.persistent(Codec.STRING));
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Boolean>> AUTO_RIDE = register(
             "auto_ride",
