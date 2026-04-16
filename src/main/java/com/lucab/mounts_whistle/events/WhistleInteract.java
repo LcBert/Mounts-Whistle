@@ -27,26 +27,6 @@ import java.util.UUID;
 
 @EventBusSubscriber(modid = MountsWhistle.MOD_ID)
 public class WhistleInteract {
-    // TODO
-    @SubscribeEvent
-    public static void onItemDrop(ItemTossEvent event) {
-        Level level = event.getPlayer().level();
-        ItemStack stack = event.getEntity().getItem();
-        ModConfig.Config config = ModConfig.INSTANCE;
-
-        if (!config.despawn.despawnWhenDrop) return;
-
-        if (stack.getItem() == ItemsRegistry.MOUNTS_WHISTLE.get()) {
-            String mounstUUID = stack.get(WhistleDataComponents.MOUNT_UUID);
-
-            if (level instanceof ServerLevel serverLevel) {
-                Entity entity = serverLevel.getEntity(UUID.fromString(mounstUUID));
-                if (entity != null) {
-                }
-            }
-        }
-    }
-
     @SubscribeEvent
     public static void onPlayerInteractEntity(PlayerInteractEvent.EntityInteract event) {
         Player player = event.getEntity();

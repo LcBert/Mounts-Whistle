@@ -22,7 +22,6 @@ public class ModConfig {
         }
 
         public static class DespawnHandler {
-            public boolean despawnWhenDrop = true;
             public int despawnDistance = 20;
             public int despawnTime = 60;
         }
@@ -39,7 +38,7 @@ public class ModConfig {
                 public float jumpModifier = 0.2f;
             }
 
-            public float baseSpeedAttribute = 0.5f;
+            public float baseSpeedAttribute = 0.3f;
             public float baseJumpAttribute = 0.5f;
             public EnchantModifier enchantModifier = new EnchantModifier();
         }

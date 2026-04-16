@@ -11,5 +11,8 @@
   "message.mounts_whistle.whistle_not_own": "Questo fischietto non è tuo",
   "itemGroup.mounts_whistle.mounts_whistle": "Fischietto Cavalcature",
   "enchantment.mounts_whistle.mount_speed.description": "Potenziamento velocità cavalcatura",
-  "enchantment.mounts_whistle.mount_jump.description": "Potenziamento salto cavalcatura"
+  "enchantment.mounts_whistle.mount_jump.description": "Potenziamento salto cavalcatura",
+  "key.categories.mounts_whistle": "Fischietto per cavalcature",
+  "key.mounts_whistle.whistle_key": "Evoca/Richiama cavalcatura",
+  "curios.identifier.mounts_whistle": "Fischietto per Cavalcature"
 }

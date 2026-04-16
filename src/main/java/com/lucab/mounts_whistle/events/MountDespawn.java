@@ -11,6 +11,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 
+import java.lang.annotation.Retention;
 import java.util.UUID;
 
 @EventBusSubscriber(modid = MountsWhistle.MOD_ID)
@@ -35,7 +36,10 @@ public class MountDespawn {
         UUID ownerUUID = mount.getOwnerUUID();
         if (ownerUUID == null) return;
         Player player = level.getPlayerByUUID(ownerUUID);
-        if (player == null) return;
+        if (player == null) {
+            MountHelper.despawnMount(level, mount, null);
+            return;
+        }
 
         if (entity.distanceTo(player) > config.despawn.despawnDistance) MountHelper.despawnMount(level, mount, null);
     }
