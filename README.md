@@ -60,7 +60,7 @@ Mod add 2 enchantments for the whistle with max level 3:
 
 ## Version
 
-- Mod: `0.3`
+- Mod: `0.4`
 - Mod ID: `mounts_whistle`
 - Author: `lucab`
 - License: `MIT`
