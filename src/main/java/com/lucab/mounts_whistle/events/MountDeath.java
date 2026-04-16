@@ -15,7 +15,7 @@ public class MountDeath {
         AbstractHorse mount = MountHelper.getMount(event.getEntity());
         if (mount == null) return;
 
-        if(mount.isTamed()) {
+        if (mount.isTamed()) {
             MountHelper.dropMountInventory(event.getEntity().level(), mount, null);
             event.setCanceled(true);
             mount.kill();
@@ -28,6 +28,6 @@ public class MountDeath {
         AbstractHorse mount = MountHelper.getMount(event.getEntity());
         if (mount == null) return;
 
-        if (config.protection.mountInvulnerable) event.setCanceled(true);
+        if (config.protection.mountInvulnerable && mount.isTamed()) event.setCanceled(true);
     }
 }
