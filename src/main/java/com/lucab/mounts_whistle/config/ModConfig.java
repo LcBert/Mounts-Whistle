@@ -14,18 +14,41 @@ import java.util.List;
 
 public class ModConfig {
     public static class Config {
-        public List<String> mounstList = new ArrayList<>();
-        public boolean whistleShare = true;
-        public boolean onlyRideOwner = true;
-        public boolean enableAutoRide = true;
-        public boolean despawnWhenDrop = true;
-        public int despawnDistance = 20;
-        public int despawnTime = 60;
-        //public boolean renameMount = true;
-        public boolean equipSaddle = true;
-        public boolean dropSaddle = false;
-        public boolean dropArmor = false;
-        public boolean mountInvulnerable = false;
+        public static class ProtectionHandler {
+            public boolean enableAutoRide = true;
+            public boolean whistleShare = true;
+            public boolean onlyRideOwner = true;
+            public boolean mountInvulnerable = false;
+        }
+
+        public static class DespawnHandler {
+            public boolean despawnWhenDrop = true;
+            public int despawnDistance = 20;
+            public int despawnTime = 60;
+        }
+
+        public static class InventoryHandler {
+            public boolean equipSaddle = true;
+            public boolean dropSaddle = false;
+            public boolean dropArmor = false;
+        }
+
+        public static class AttributeModifier {
+            public static class EnchantModifier {
+                public float speedModifier = 0.05f;
+                public float jumpModifier = 0.2f;
+            }
+
+            public float baseSpeedAttribute = 0.5f;
+            public float baseJumpAttribute = 0.5f;
+            public EnchantModifier enchantModifier = new EnchantModifier();
+        }
+
+        public List<String> mountsList = new ArrayList<>();
+        public ProtectionHandler protection = new ProtectionHandler();
+        public DespawnHandler despawn = new DespawnHandler();
+        public InventoryHandler inventory = new InventoryHandler();
+        public AttributeModifier attributeModifier = new AttributeModifier();
     }
 
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();

@@ -30,13 +30,13 @@ public class MountDespawn {
         }
 
         long timeExceed = System.currentTimeMillis() - MountHelper.mountsTimer.get(mount.getUUID());
-        if ((timeExceed / 1000) >= config.despawnTime) MountHelper.despawnMount(level, mount, null);
+        if ((timeExceed / 1000) >= config.despawn.despawnTime) MountHelper.despawnMount(level, mount, null);
 
         UUID ownerUUID = mount.getOwnerUUID();
         if (ownerUUID == null) return;
         Player player = level.getPlayerByUUID(ownerUUID);
         if (player == null) return;
 
-        if (entity.distanceTo(player) > config.despawnDistance) MountHelper.despawnMount(level, mount, null);
+        if (entity.distanceTo(player) > config.despawn.despawnDistance) MountHelper.despawnMount(level, mount, null);
     }
 }

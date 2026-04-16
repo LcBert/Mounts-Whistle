@@ -1,0 +1,21 @@
+{
+  "description": {
+    "translate": "enchantment.mounts_whistle.mount_speed.description"
+  },
+  "supported_items": "mounts_whistle:mounts_whistle",
+  "primary_items": "mounts_whistle:mounts_whistle",
+  "weight": 5,
+  "max_level": 3,
+  "min_cost": {
+    "base": 3,
+    "per_level_above_first": 1
+  },
+  "max_cost": {
+    "base": 30,
+    "per_level_above_first": 1
+  },
+  "anvil_cost": 2,
+  "slots": [
+    "mainhand"
+  ]
+}

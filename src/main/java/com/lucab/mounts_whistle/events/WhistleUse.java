@@ -13,6 +13,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.animal.horse.AbstractHorse;
 import net.minecraft.world.entity.animal.horse.Horse;
 import net.minecraft.world.entity.animal.horse.Markings;
@@ -40,7 +41,7 @@ public class WhistleUse {
 
         if (stack.getItem() != ItemsRegistry.MOUNTS_WHISTLE.get()) return;
 
-        if (player.isShiftKeyDown() && config.enableAutoRide) {
+        if (player.isShiftKeyDown() && config.protection.enableAutoRide) {
             boolean autoRide = !stack.getOrDefault(WhistleDataComponents.AUTO_RIDE, false);
             stack.set(WhistleDataComponents.AUTO_RIDE, autoRide);
             player.displayClientMessage(Component.translatable("message.mounts_whistle.auto_ride_" + (autoRide ? "enabled" : "disabled")), true);
@@ -60,7 +61,7 @@ public class WhistleUse {
 
         // Mount share
         String whistleOwner = stack.getOrDefault(WhistleDataComponents.WHISTLE_OWNER_UUID, "");
-        if (!config.whistleShare && !whistleOwner.equals(player.getUUID().toString()))
+        if (!config.protection.whistleShare && !whistleOwner.equals(player.getUUID().toString()))
             return;
 
         if (mount != null) {
@@ -94,7 +95,7 @@ public class WhistleUse {
 
                 MountHelper.mountsTimer.put(entity.getUUID(), System.currentTimeMillis());
 
-                if (config.equipSaddle)
+                if (config.inventory.equipSaddle)
                     newMount.equipSaddle(new ItemStack(Items.SADDLE), SoundSource.AMBIENT);
                 if (newMount instanceof Horse horse) {
                     Variant variant = stack.getOrDefault(WhistleDataComponents.MOUNT_VARIANT, Variant.BLACK);
@@ -112,7 +113,12 @@ public class WhistleUse {
 
                 stack.set(WhistleDataComponents.MOUNT_UUID, newMount.getUUID().toString());
                 newMount.tameWithName(player);
-                if (stack.getOrDefault(WhistleDataComponents.AUTO_RIDE, false) && config.enableAutoRide)
+                float speedAttribute = config.attributeModifier.baseSpeedAttribute + MountHelper.getWhistleSpeedAttribute(player, stack);
+                float jumpAttribute = config.attributeModifier.baseJumpAttribute + MountHelper.getWhistleJumpAttribute(player, stack);
+
+                newMount.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(speedAttribute);
+                newMount.getAttribute(Attributes.JUMP_STRENGTH).setBaseValue(jumpAttribute);
+                if (stack.getOrDefault(WhistleDataComponents.AUTO_RIDE, false) && config.protection.enableAutoRide)
                     player.startRiding(newMount);
 
                 player.swing(event.getHand(), true);

@@ -28,6 +28,6 @@ public class MountDeath {
         AbstractHorse mount = MountHelper.getMount(event.getEntity());
         if (mount == null) return;
 
-        if (config.mountInvulnerable) event.setCanceled(true);
+        if (config.protection.mountInvulnerable) event.setCanceled(true);
     }
 }

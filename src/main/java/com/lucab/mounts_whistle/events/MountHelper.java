@@ -1,9 +1,14 @@
 package com.lucab.mounts_whistle.events;
 
+import com.lucab.mounts_whistle.MountsWhistle;
 import com.lucab.mounts_whistle.config.ModConfig;
 import com.lucab.mounts_whistle.data_components.WhistleDataComponents;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.animal.horse.AbstractHorse;
@@ -11,6 +16,7 @@ import net.minecraft.world.entity.animal.horse.Horse;
 import net.minecraft.world.entity.animal.horse.Markings;
 import net.minecraft.world.entity.animal.horse.Variant;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
@@ -27,11 +33,11 @@ public class MountHelper {
         ModConfig.Config config = ModConfig.INSTANCE;
         if (!(entity instanceof AbstractHorse mount)) return null;
 
-        if (config.mounstList.isEmpty()) {
+        if (config.mountsList.isEmpty()) {
             return mount;
         } else {
             String entityType = entity.getType().toString();
-            if (config.mounstList.contains(entityType)) return mount;
+            if (config.mountsList.contains(entityType)) return mount;
         }
         return null;
     }
@@ -52,7 +58,7 @@ public class MountHelper {
     public static void dropMountInventory(Level level, AbstractHorse mount, @Nullable ItemStack stack) {
         ModConfig.Config config = ModConfig.INSTANCE;
         // Drop saddle
-        if (config.dropSaddle) {
+        if (config.inventory.dropSaddle) {
             if (mount.isSaddled()) {
                 ItemStack saddle = new ItemStack(Items.SADDLE);
                 level.addFreshEntity(new ItemEntity(level, mount.getX(), mount.getY(), mount.getZ(), saddle));
@@ -64,7 +70,7 @@ public class MountHelper {
 
         // Drop Armor
         ItemStack armor = mount.getArmorSlots().iterator().next();
-        if (config.dropArmor) {
+        if (config.inventory.dropArmor) {
             level.addFreshEntity(new ItemEntity(level, mount.getX(), mount.getY(), mount.getZ(), armor));
             if (stack != null) stack.remove(WhistleDataComponents.ARMOR_ITEM);
         } else {
@@ -87,5 +93,29 @@ public class MountHelper {
         horse.addAdditionalSaveData(tag);
         tag.putInt("Variant", packedVariant);
         horse.readAdditionalSaveData(tag);
+    }
+
+    public static float getWhistleSpeedAttribute(Player player, ItemStack stack) {
+        ModConfig.Config config = ModConfig.INSTANCE;
+        int level = stack.getEnchantmentLevel(
+                player.level().registryAccess()
+                        .lookupOrThrow(Registries.ENCHANTMENT)
+                        .getOrThrow(ResourceKey.create(Registries.ENCHANTMENT,
+                                ResourceLocation.fromNamespaceAndPath(MountsWhistle.MOD_ID, "mount_speed")))
+        );
+
+        return config.attributeModifier.enchantModifier.speedModifier * (float) level;
+    }
+
+    public static float getWhistleJumpAttribute(Player player, ItemStack stack) {
+        ModConfig.Config config = ModConfig.INSTANCE;
+        int level = stack.getEnchantmentLevel(
+                player.level().registryAccess()
+                        .lookupOrThrow(Registries.ENCHANTMENT)
+                        .getOrThrow(ResourceKey.create(Registries.ENCHANTMENT,
+                                ResourceLocation.fromNamespaceAndPath(MountsWhistle.MOD_ID, "mount_jump")))
+        );
+
+        return config.attributeModifier.enchantModifier.jumpModifier * (float) level;
     }
 }

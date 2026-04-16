@@ -11,6 +11,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.animal.horse.AbstractHorse;
 import net.minecraft.world.entity.animal.horse.Horse;
 import net.minecraft.world.entity.player.Player;
@@ -33,7 +34,7 @@ public class WhistleInteract {
         ItemStack stack = event.getEntity().getItem();
         ModConfig.Config config = ModConfig.INSTANCE;
 
-        if (!config.despawnWhenDrop) return;
+        if (!config.despawn.despawnWhenDrop) return;
 
         if (stack.getItem() == ItemsRegistry.MOUNTS_WHISTLE.get()) {
             String mounstUUID = stack.get(WhistleDataComponents.MOUNT_UUID);
@@ -63,7 +64,7 @@ public class WhistleInteract {
         UUID ownerUUID = mount.getOwnerUUID();
 
         // Handle mount ride based in config and player uuid
-        if (config.onlyRideOwner
+        if (config.protection.onlyRideOwner
                 && ownerUUID != null
                 && !ownerUUID.equals(player.getUUID())
                 && isMountTamed) {
@@ -81,7 +82,7 @@ public class WhistleInteract {
             }
 
             mount.tameWithName(player);
-            if (config.equipSaddle) mount.equipSaddle(new ItemStack(Items.SADDLE), SoundSource.AMBIENT);
+            if (config.inventory.equipSaddle) mount.equipSaddle(new ItemStack(Items.SADDLE), SoundSource.AMBIENT);
             stack.set(WhistleDataComponents.HAS_MOUNT, true);
             stack.set(WhistleDataComponents.MOUNT_UUID, mount.getUUID().toString());
             ResourceLocation mountTypeId = BuiltInRegistries.ENTITY_TYPE.getKey(mount.getType());
@@ -94,7 +95,12 @@ public class WhistleInteract {
             }
             stack.set(WhistleDataComponents.WHISTLE_OWNER_UUID, mount.getOwnerUUID().toString());
             MountHelper.mountsTimer.put(entity.getUUID(), System.currentTimeMillis());
-            // TODO: rename mount
+
+            float speedAttribute = config.attributeModifier.baseSpeedAttribute + MountHelper.getWhistleSpeedAttribute(player, stack);
+            float jumpAttribute = config.attributeModifier.baseJumpAttribute + MountHelper.getWhistleJumpAttribute(player, stack);
+
+            mount.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(speedAttribute);
+            mount.getAttribute(Attributes.JUMP_STRENGTH).setBaseValue(jumpAttribute);
         }
 
         // Disable taming mount already tamed
