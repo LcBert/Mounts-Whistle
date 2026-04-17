@@ -1,6 +1,5 @@
 package com.lucab.mounts_whistle.capabilities;
 
-import com.lucab.mounts_whistle.MountsWhistle;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.capabilities.EntityCapability;
 import net.neoforged.neoforge.items.IItemHandler;

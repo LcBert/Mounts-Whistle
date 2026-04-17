@@ -13,6 +13,7 @@
   "enchantment.mounts_whistle.mount_speed.description": "Mount Speed Boost",
   "enchantment.mounts_whistle.mount_jump.description": "Mount Jump Boost",
   "key.categories.mounts_whistle": "Mounts Whistle",
-  "key.mounts_whistle.whistle_toggle": "Spawn/Despawn Mount",
+  "key.mounts_whistle.whistle_toggle_mount": "Spawn/Despawn Mount",
+  "key.mounts_whistle.whistle_toggle_auto_ride": "Toggle Auto-Ride",
   "curios.identifier.mounts_whistle": "Mounts Whistle"
 }

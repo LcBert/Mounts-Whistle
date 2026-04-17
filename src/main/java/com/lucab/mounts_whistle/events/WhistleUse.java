@@ -9,6 +9,6 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 public class WhistleUse {
     @SubscribeEvent
     public static void onWhistleUse(PlayerInteractEvent.RightClickItem event) {
-        ToggleMount.toggleMount(event.getEntity(), event.getItemStack(), true);
+        MountHelper.toggleMount(event.getEntity(), event.getItemStack(), true);
     }
 }
