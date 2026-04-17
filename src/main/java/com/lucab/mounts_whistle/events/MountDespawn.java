@@ -11,7 +11,6 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 
-import java.lang.annotation.Retention;
 import java.util.UUID;
 
 @EventBusSubscriber(modid = MountsWhistle.MOD_ID)

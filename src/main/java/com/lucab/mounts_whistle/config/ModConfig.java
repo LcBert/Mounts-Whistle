@@ -65,6 +65,8 @@ public class ModConfig {
         } catch (IOException e) {
             MountsWhistle.LOGGER.error("[MountsWhistle] Failed to load config file!");
         }
+
+        save();
     }
 
     public static void save() {

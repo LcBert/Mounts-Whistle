@@ -4,7 +4,6 @@ import com.lucab.mounts_whistle.MountsWhistle;
 import com.lucab.mounts_whistle.config.ModConfig;
 import com.lucab.mounts_whistle.data_components.WhistleDataComponents;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
