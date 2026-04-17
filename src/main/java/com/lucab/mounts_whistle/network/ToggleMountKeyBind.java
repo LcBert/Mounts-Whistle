@@ -1,13 +1,10 @@
 package com.lucab.mounts_whistle.network;
 
 import com.lucab.mounts_whistle.MountsWhistle;
-import com.lucab.mounts_whistle.capabilities.CuriosCapabilities;
 import com.lucab.mounts_whistle.events.ToggleMount;
 import com.lucab.mounts_whistle.items.ItemsRegistry;
-import io.wispforest.accessories.api.AccessoriesAPI;
 import io.wispforest.accessories.api.AccessoriesCapability;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
@@ -19,7 +16,6 @@ import top.theillusivec4.curios.api.type.capability.ICuriosItemHandler;
 import top.theillusivec4.curios.api.type.inventory.ICurioStacksHandler;
 
 import java.util.Map;
-import java.util.Optional;
 
 public record ToggleMountKeyBind() implements CustomPacketPayload {
     public static final Type<ToggleMountKeyBind> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MountsWhistle.MOD_ID, "toggle_mount_keybind"));
@@ -53,7 +49,6 @@ public record ToggleMountKeyBind() implements CustomPacketPayload {
                     capability.getAllEquipped().forEach(slot -> {
                         if (slot.reference().slotName().equals("mounts_whistle") && slot.stack().getItem() == ItemsRegistry.MOUNTS_WHISTLE.get()) {
                             ToggleMount.toggleMount(player, slot.stack(), false);
-                            return;
                         }
                     });
                 }
