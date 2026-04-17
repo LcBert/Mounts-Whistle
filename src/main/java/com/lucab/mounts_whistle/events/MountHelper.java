@@ -10,11 +10,9 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.Container;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.animal.horse.AbstractHorse;
-import net.minecraft.world.entity.animal.horse.Horse;
-import net.minecraft.world.entity.animal.horse.Markings;
-import net.minecraft.world.entity.animal.horse.Variant;
+import net.minecraft.world.entity.animal.horse.*;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -47,9 +45,7 @@ public class MountHelper {
         dropMountInventory(level, mount, stack);
         mount.remove(Entity.RemovalReason.DISCARDED);
         if (level instanceof ServerLevel serverLevel) {
-            serverLevel.sendParticles(ParticleTypes.SMOKE,
-                    mount.getX(), mount.getY() + 0.5, mount.getZ(),
-                    100, 0.5, 0.5, 0.5, 0.05);
+            serverLevel.sendParticles(ParticleTypes.SMOKE, mount.getX(), mount.getY() + 0.5, mount.getZ(), 100, 0.5, 0.5, 0.5, 0.05);
         }
 
         mountsTimer.remove(mount.getUUID());
@@ -69,13 +65,25 @@ public class MountHelper {
         }
 
         // Drop Armor
-        ItemStack armor = mount.getArmorSlots().iterator().next();
+        ItemStack armor = mount.getBodyArmorItem();
         if (config.inventory.dropArmor) {
             level.addFreshEntity(new ItemEntity(level, mount.getX(), mount.getY(), mount.getZ(), armor));
             if (stack != null) stack.remove(WhistleDataComponents.ARMOR_ITEM);
         } else {
             if (stack != null) stack.set(WhistleDataComponents.ARMOR_ITEM, armor.getItem());
         }
+
+        // Drop chest content
+        if (mount instanceof AbstractChestedHorse chestedMount) {
+            if (chestedMount.hasChest()) {
+                Container container = chestedMount.getInventory();
+                for (int i = 1; i < container.getContainerSize(); i++) {
+                    level.addFreshEntity(new ItemEntity(level, mount.getX(), mount.getY(), mount.getZ(), container.getItem(i)));
+                }
+                level.addFreshEntity(new ItemEntity(level, mount.getX(), mount.getY(), mount.getZ(), Items.CHEST.getDefaultInstance()));
+            }
+        }
+
     }
 
     public static AbstractHorse getMountByUUID(Level level, UUID uuid) {
@@ -97,24 +105,14 @@ public class MountHelper {
 
     public static float getWhistleSpeedAttribute(Player player, ItemStack stack) {
         ModConfig.Config config = ModConfig.INSTANCE;
-        int level = stack.getEnchantmentLevel(
-                player.level().registryAccess()
-                        .lookupOrThrow(Registries.ENCHANTMENT)
-                        .getOrThrow(ResourceKey.create(Registries.ENCHANTMENT,
-                                ResourceLocation.fromNamespaceAndPath(MountsWhistle.MOD_ID, "mount_speed")))
-        );
+        int level = stack.getEnchantmentLevel(player.level().registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(MountsWhistle.MOD_ID, "mount_speed"))));
 
         return config.attributeModifier.enchantModifier.speedModifier * (float) level;
     }
 
     public static float getWhistleJumpAttribute(Player player, ItemStack stack) {
         ModConfig.Config config = ModConfig.INSTANCE;
-        int level = stack.getEnchantmentLevel(
-                player.level().registryAccess()
-                        .lookupOrThrow(Registries.ENCHANTMENT)
-                        .getOrThrow(ResourceKey.create(Registries.ENCHANTMENT,
-                                ResourceLocation.fromNamespaceAndPath(MountsWhistle.MOD_ID, "mount_jump")))
-        );
+        int level = stack.getEnchantmentLevel(player.level().registryAccess().lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(MountsWhistle.MOD_ID, "mount_jump"))));
 
         return config.attributeModifier.enchantModifier.jumpModifier * (float) level;
     }
