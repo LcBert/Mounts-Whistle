@@ -1,0 +1,7 @@
+{
+  "replace": false,
+  "amount": 1,
+  "operation": "set",
+  "order": 50,
+  "icon": "mounts_whistle:slot/mounts_whistle_empty_slot"
+}

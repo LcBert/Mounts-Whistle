@@ -4,6 +4,8 @@ import com.lucab.mounts_whistle.MountsWhistle;
 import com.lucab.mounts_whistle.capabilities.CuriosCapabilities;
 import com.lucab.mounts_whistle.events.ToggleMount;
 import com.lucab.mounts_whistle.items.ItemsRegistry;
+import io.wispforest.accessories.api.AccessoriesAPI;
+import io.wispforest.accessories.api.AccessoriesCapability;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
@@ -45,6 +47,16 @@ public record ToggleMountKeyBind() implements CustomPacketPayload {
                         ToggleMount.toggleMount(player, stack, false);
                     }
                 });
+
+                AccessoriesCapability capability = AccessoriesCapability.get(player);
+                if (capability != null) {
+                    capability.getAllEquipped().forEach(slot -> {
+                        if (slot.reference().slotName().equals("mounts_whistle") && slot.stack().getItem() == ItemsRegistry.MOUNTS_WHISTLE.get()) {
+                            ToggleMount.toggleMount(player, slot.stack(), false);
+                            return;
+                        }
+                    });
+                }
             }
         });
     }
